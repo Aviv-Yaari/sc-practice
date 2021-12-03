@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styled, { ThemeProvider } from "styled-components";
+import { DashBox } from "./components/DashBox";
+import { Intro } from "./components/Intro";
+import { theme } from "./styles/theme";
+import data from "./data.json";
+import { MainContent } from "./components/MainContent";
+import { GlobalStyle } from "./styles/global";
+import { useState } from "react";
+import { Data } from "./types/data";
 
 function App() {
+  const [timeframe, setTimeframe] = useState<keyof Data["timeframes"]>("weekly");
+  if (!data) return <div>Loading...</div>;
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <Wrapper>
+        <MainContent>
+          <Intro timeframe={timeframe} onTimeSelect={setTimeframe} />
+          {data.map((info) => (
+            <DashBox timeframe={timeframe} info={info} />
+          ))}
+        </MainContent>
+      </Wrapper>
+    </ThemeProvider>
   );
 }
+
+const Wrapper = styled.div`
+  display: grid;
+  min-height: 100vh;
+  place-content: center;
+  padding: 10px;
+`;
 
 export default App;
